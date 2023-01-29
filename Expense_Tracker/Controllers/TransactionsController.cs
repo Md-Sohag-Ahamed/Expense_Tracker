@@ -53,13 +53,28 @@ namespace Expense_Tracker.Controllers
         {
             if (ModelState.IsValid)
             {
-                _context.Add(transaction);
-                await _context.SaveChangesAsync();
+                if (!TransactionExists())
+                {
+                 _context.Add(transaction);
+               await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
+               
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", transaction.CategoryId);
-            return View(transaction);
-        }
+             else
+              {
+          ViewBag.Message = "You Cannot Get Future Date";
+
+ 
+              }
+
+        ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName", transaction.CategoryId);
+        
+
+
+      }
+      return View(transaction);
+
+    }
 
         // GET: Transactions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -99,14 +114,14 @@ namespace Expense_Tracker.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!TransactionExists(transaction.TransactionId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    //if (!TransactionExists(transaction.TransactionId))
+                    //{
+                    //    return NotFound();
+                    //}
+                    //else
+                    //{
+                    //    throw;
+                    //}
                 }
                 return RedirectToAction(nameof(Index));
             }
@@ -144,9 +159,9 @@ namespace Expense_Tracker.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool TransactionExists(int id)
+        private bool TransactionExists()
         {
-            return _context.Transactions.Any(e => e.TransactionId == id);
+            return _context.Transactions.Any(e => e.ExpenseDate>DateTime.Now);
         }
     }
 }
