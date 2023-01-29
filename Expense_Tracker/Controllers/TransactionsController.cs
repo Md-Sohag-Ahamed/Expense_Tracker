@@ -24,10 +24,21 @@ namespace Expense_Tracker.Controllers
             var applicationDbContext = _context.Transactions.Include(t => t.Category);
             return View(await applicationDbContext.ToListAsync());
         }
+    [HttpPost]
+    public IActionResult Index(DateTime? fdate, DateTime? tdate)
+    {
+      var transaction = _context.Transactions.Include(c => c.Category).Where(d => d.ExpenseDate >= fdate && d.ExpenseDate <= tdate).ToList();
+      if (fdate == null || tdate == null)
+      {
+        transaction = _context.Transactions.Include(c => c.Category).ToList();
+
+      }
+      return View(transaction);
+    }
 
 
-        // GET: Transactions/Create
-        public IActionResult Create()
+    // GET: Transactions/Create
+    public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "CategoryId", "CategoryName");
             return View();

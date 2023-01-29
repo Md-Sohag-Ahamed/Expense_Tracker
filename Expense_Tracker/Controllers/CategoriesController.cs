@@ -76,6 +76,7 @@ namespace Expense_Tracker.Controllers
         }
         else
         {
+          ViewBag.Message = "This Category Already Exit";
           
         }
 
